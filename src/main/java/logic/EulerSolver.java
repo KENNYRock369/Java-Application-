@@ -6,7 +6,7 @@ public class EulerSolver {
 
     // Definir la ecuación diferencial dy/dx = f(x, y) (Ejemplo: y' = x + y)
     private static double f(double x, double y) {
-        return x + y;
+        return 0.2*x * y;
     }
 
     // Método de Euler
@@ -15,7 +15,6 @@ public class EulerSolver {
     *
     *
     * */
-
     public static XYSeries solveEuler(double x0, double y0, double h, int steps) {
         XYSeries series = new XYSeries("Euler");
         double x = x0, y = y0;
@@ -48,19 +47,24 @@ public class EulerSolver {
         return series;
     }
 
-    // 🔹 Método de Runge-Kutta de Cuarto Orden (RK4)
+    // Método de Runge-Kutta de 4to Orden (RK4)
+// Este método calcula una estimación más precisa al promediar 4 pendientes (k1 a k4)
     public static XYSeries solveRungeKutta(double x0, double y0, double h, int steps) {
         XYSeries series = new XYSeries("Runge-Kutta");
-        double x = x0, y = y0;
+        double x = x0;
+        double y = y0;
+
         for (int i = 0; i <= steps; i++) {
             series.add(x, y);
 
-            double k1 = h * f(x, y);
-            double k2 = h * f(x + h / 2, y + k1 / 2);
-            double k3 = h * f(x + h / 2, y + k2 / 2);
-            double k4 = h * f(x + h, y + k3);
+            // Cálculo de las pendientes
+            double k1 = f(x, y);
+            double k2 = f(x + h / 2, y + (h / 2) * k1);
+            double k3 = f(x + h / 2, y + (h / 2) * k2);
+            double k4 = f(x + h, y + h * k3);
 
-            y += (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+            // Fórmula clásica de Runge-Kutta 4to orden
+            y += (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4);
             x += h;
         }
         return series;
